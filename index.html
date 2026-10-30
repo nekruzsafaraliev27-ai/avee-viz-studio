@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#070b16"><title>BEYOND TIME: BLOOD EYES</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#070b16;color:white;font-family:Arial;touch-action:none}#game{position:fixed;inset:0}canvas{display:block}
+.panel{background:#101d35bb;border:1px solid #55dfff66;box-shadow:0 0 22px #21cfff22;backdrop-filter:blur(10px);border-radius:14px}
+#brand,#stats,#mission{position:absolute;padding:11px}#brand{top:12px;left:12px;font-size:12px;letter-spacing:2px;color:#baf8ff;font-weight:bold}#brand small{display:block;color:#ffc857;margin-top:4px}
+#stats{top:12px;right:12px;width:140px;font-size:9px;color:#b9d6e8}.bar{height:8px;background:#1b2c43;border-radius:8px;margin:5px 0 9px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#19d9e9,#66f5c3);width:100%}#mission{top:95px;left:12px;font-size:11px;max-width:190px}#mission b{display:block;color:#ffc857;margin-bottom:5px}
+#stick{position:absolute;left:22px;bottom:25px;width:120px;height:120px;border:1px solid #5beaff77;border-radius:50%;background:#10243c88;pointer-events:auto}#nub{position:absolute;left:36px;top:36px;width:46px;height:46px;border-radius:50%;background:#48cce9;border:1px solid white;box-shadow:0 0 18px #2feaff}
+.action{position:absolute;display:grid;place-items:center;border-radius:50%;pointer-events:auto;background:#183653dd;border:1px solid #9cefff;color:white;font-weight:bold;box-shadow:0 0 20px #27dfff44}#attack{right:22px;bottom:32px;width:82px;height:82px;border-color:#ff7890}#jump{right:112px;bottom:47px;width:58px;height:58px;font-size:10px}#switch{right:26px;bottom:130px;width:54px;height:54px;color:#ffc857;font-size:9px}
+#hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:9px;color:#c5e4ef;white-space:nowrap}
+#start{position:fixed;inset:0;z-index:4;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse,#172c4c,#050914 75%)}#card{max-width:430px;width:100%;padding:27px 22px;text-align:center;border-radius:22px}h1{font-size:25px;letter-spacing:2px;color:#d8fbff}h1 span{color:#ffc857}p{font-size:12px;line-height:1.6;color:#c2d5e4}button{width:100%;padding:15px;border:0;border-radius:12px;background:linear-gradient(90deg,#16bcd4,#3978ee);color:white;font-weight:bold;letter-spacing:2px}#toast{position:absolute;top:48%;left:50%;transform:translate(-50%,-50%);font-weight:bold;color:white;text-shadow:0 0 15px #37eaff;opacity:0}
+</style></head><body>
+<div id="game"></div><div id="brand" class="panel">BEYOND TIME<small>BLOOD EYES</small></div>
+<div id="stats" class="panel">ЗДОРОВЬЕ<div class="bar"><div id="hp" class="fill"></div></div>ВРАГИ: <b id="count">3</b><div class="bar"><div id="ehp" class="fill" style="background:linear-gradient(90deg,#ff3158,#ff9b4a)"></div></div></div>
+<div id="mission" class="panel"><b>ЗАДАНИЕ 01</b>Найди врагов на арене и победи их.</div>
+<div id="stick"><div id="nub"></div></div><div id="attack" class="action">АТАКА</div><div id="jump" class="action">ПРЫЖОК</div><div id="switch" class="action">ГЕРОЙ</div><div id="hint">ДЖОЙСТИК — ДВИЖЕНИЕ · АТАКА — УДАР</div><div id="toast"></div>
+<div id="start"><div id="card" class="panel"><h1>BEYOND TIME:<br><span>BLOOD EYES</span></h1><div style="color:#ffc857;font-size:11px;letter-spacing:2px">СЮЦИН · ПЕРВЫЙ ЭПИЗОД</div><p>Тестовая 3D-арена. Управляй героем, двигайся, прыгай и сражайся с противниками. Игра запускается прямо в браузере телефона.</p><button id="play">НАЧАТЬ ИГРУ</button></div></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x080d1b);scene.fog=new THREE.Fog(0x080d1b,22,60);
+const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,100),renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);document.querySelector('#game').appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0x9bdfff,0x15101f,2));let sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(-8,15,8);scene.add(sun);
+const material=c=>new THREE.MeshStandardMaterial({color:c,metalness:.4,roughness:.45});
+let floor=new THREE.Mesh(new THREE.CircleGeometry(23,64),material(0x17243a));floor.rotation.x=-Math.PI/2;scene.add(floor);
+let grid=new THREE.GridHelper(46,46,0x1b9dbd,0x26364c);grid.position.y=.02;scene.add(grid);
+let ring=new THREE.Mesh(new THREE.TorusGeometry(17,.07,8,90),new THREE.MeshBasicMaterial({color:0x24cde8}));ring.rotation.x=Math.PI/2;ring.position.y=.05;scene.add(ring);
+for(let i=0;i<12;i++){let a=i*Math.PI/6,p=new THREE.Mesh(new THREE.CylinderGeometry(.2,.3,4,8),material(i%2?0x173b5a:0x3d2c50));p.position.set(Math.cos(a)*20,2,Math.sin(a)*20);scene.add(p)}
+function person(color,glow){let g=new THREE.Group(),body=material(color),light=material(glow),skin=material(0xe6b99c);function cube(w,h,d,m,x,y,z){let o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o}
+cube(.7,1,.4,body,0,1.6,0);cube(.55,.5,.45,light,0,2.35,0);cube(.46,.5,.45,skin,0,2.85,0);cube(.52,.15,.48,body,0,3.08,0);cube(.2,.85,.24,body,-.45,1.6,0);cube(.2,.85,.24,body,.45,1.6,0);cube(.25,.8,.27,body,-.2,.6,0);cube(.25,.8,.27,body,.2,.6,0);let sword=cube(.08,1.4,.1,light,.68,1.45,0);sword.rotation.z=-.2;g.userData.sword=sword;return g}
+let hero=person(0x182a48,0x2fe5ff),captain=person(0x30233e,0xffbd4c);hero.position.set(0,0,5);captain.position.set(0,0,5);captain.visible=false;scene.add(hero,captain);
+let enemies=[];for(let [x,z] of [[-5,-5],[5,-8],[7,3]]){let m=person(0x281522,0xff3158);m.position.set(x,0,z);scene.add(m);enemies.push({mesh:m,hp:100,alive:true})}
+let active=hero,which=0,hp=100,started=false,vy=0,ground=true,cool=0,joy={x:0,y:0},drag=false;
+const $=s=>document.querySelector(s),toast=t=>{$('#toast').textContent=t;$('#toast').style.opacity=1;setTimeout(()=>$('#toast').style.opacity=0,800)};
+const stick=$('#stick'),nub=$('#nub');function move(e){let r=stick.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),d=Math.hypot(dx,dy),k=Math.min(1,44/(d||1));joy={x:dx*k/44,y:dy*k/44};nub.style.transform=`translate(${dx*k}px,${dy*k}px)`}
+stick.onpointerdown=e=>{drag=true;stick.setPointerCapture(e.pointerId);move(e)};stick.onpointermove=e=>{if(drag)move(e)};function stop(){drag=false;joy={x:0,y:0};nub.style.transform=''}stick.onpointerup=stop;stick.onpointercancel=stop;
+function jump(){if(ground){vy=7;ground=false}}function attack(){if(cool>0)return;cool=.45;active.userData.sword.rotation.x=-1;setTimeout(()=>active.userData.sword.rotation.x=0,160);let target=null,dist=3.2;for(let e of enemies)if(e.alive&&active.position.distanceTo(e.mesh.position)<dist){target=e;dist=active.position.distanceTo(e.mesh.position)}if(target){target.hp-=40;toast('ПОПАДАНИЕ!');if(target.hp<=0){target.alive=false;scene.remove(target.mesh);toast('ВРАГ ПОБЕЖДЁН')}}else toast('ПОДОЙДИ БЛИЖЕ')}
+$('#attack').onpointerdown=e=>{e.preventDefault();attack()};$('#jump').onpointerdown=e=>{e.preventDefault();jump()};$('#switch').onpointerdown=e=>{e.preventDefault();which=1-which;hero.visible=!which;captain.visible=!!which;active=which?captain:hero;toast(which?'КАПИТАН':'СЮЦИН')};
+$('#play').onclick=()=>{$('#start').style.display='none';started=true;toast('НАЧАЛО БОЯ')};
+const clock=new THREE.Clock();function frame(){requestAnimationFrame(frame);let dt=Math.min(clock.getDelta(),.04);if(started){cool=Math.max(0,cool-dt);let v=new THREE.Vector3(-joy.x,0,-joy.y);if(v.length()>1)v.normalize();active.position.addScaledVector(v,5*dt);if(v.lengthSq())active.rotation.y=Math.atan2(v.x,v.z);active.position.x=THREE.MathUtils.clamp(active.position.x,-19,19);active.position.z=THREE.MathUtils.clamp(active.position.z,-19,19);vy-=18*dt;active.position.y+=vy*dt;if(active.position.y<=0){active.position.y=0;vy=0;ground=true}
+let left=enemies.filter(e=>e.alive);for(let e of left){let d=e.mesh.position.distanceTo(active.position);if(d>1.7&&d<12){let dir=active.position.clone().sub(e.mesh.position).setY(0).normalize();e.mesh.position.addScaledVector(dir,dt*.8);e.mesh.lookAt(active.position)}}
+let target=new THREE.Vector3(active.position.x,active.position.y+4.5,active.position.z+8);camera.position.lerp(target,.1);camera.lookAt(active.position.x,active.position.y+1,active.position.z-1);
+$('#hp').style.width=hp+'%';$('#count').textContent=left.length;$('#ehp').style.width=(left.length?Math.max(...left.map(e=>e.hp)):0)+'%';if(!left.length)$('#mission').innerHTML='<b>МИССИЯ ВЫПОЛНЕНА</b>Все противники побеждены.'}
+renderer.render(scene,camera)}camera.position.set(0,5,14);camera.lookAt(0,1,0);frame();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script></body></html>
