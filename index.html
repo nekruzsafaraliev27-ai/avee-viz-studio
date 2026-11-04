@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ҳисобкунаки Корӣ • Рӯзҳо ва Рубл</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rubik:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg1: #0a0a1a;
+      --bg2: #1a0a2e;
+      --accent1: #ff00aa;
+      --accent2: #00f5d4;
+      --accent3: #fee440;
+      --accent4: #9b5de5;
+      --accent5: #00bbf9;
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --text: #f0f0ff;
+      --muted: #a0a0c0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Rubik', sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2), #0f1c3f);
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ===== Animated colorful circles ===== */
+    .bg-circles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.55;
+      animation: float 18s ease-in-out infinite;
+    }
+    .c1 { width: 420px; height: 420px; background: radial-gradient(circle, var(--accent1), transparent 70%); top: -80px; left: -100px; }
+    .c2 { width: 350px; height: 350px; background: radial-gradient(circle, var(--accent2), transparent 70%); top: 40%; right: -80px; animation-delay: -4s; animation-duration: 22s; }
+    .c3 { width: 280px; height: 280px; background: radial-gradient(circle, var(--accent3), transparent 70%); bottom: -60px; left: 20%; animation-delay: -8s; animation-duration: 16s; }
+    .c4 { width: 320px; height: 320px; background: radial-gradient(circle, var(--accent4), transparent 70%); top: 15%; left: 45%; animation-delay: -2s; animation-duration: 20s; }
+    .c5 { width: 200px; height: 200px; background: radial-gradient(circle, var(--accent5), transparent 70%); bottom: 25%; right: 25%; animation-delay: -6s; animation-duration: 14s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(40px, -30px) scale(1.08); }
+      50% { transform: translate(-20px, 50px) scale(0.95); }
+      75% { transform: translate(30px, 20px) scale(1.05); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    header { text-align: center; margin-bottom: 2.5rem; }
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3), var(--accent4));
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradientShift 8s ease infinite;
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    header p { margin-top: 0.6rem; color: var(--muted); font-size: 0.95rem; font-weight: 300; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+    }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 1.6rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,0,170,0.4), rgba(0,245,212,0.3), rgba(254,228,64,0.3));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+    }
+
+    .card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card h2 .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .dot-pink { background: var(--accent1); box-shadow: 0 0 12px var(--accent1); }
+    .dot-cyan { background: var(--accent2); box-shadow: 0 0 12px var(--accent2); }
+    .dot-yellow { background: var(--accent3); box-shadow: 0 0 12px var(--accent3); }
+    .dot-purple { background: var(--accent4); box-shadow: 0 0 12px var(--accent4); }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.7; }
+    }
+
+    .form-group { margin-bottom: 1rem; }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    input[type="number"],
+    input[type="text"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      color: var(--text);
+      font-family: 'Rubik', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    input:focus, select:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.2);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      margin-top: 1.1rem;
+    }
+    button {
+      flex: 1;
+      min-width: 120px;
+      padding: 0.75rem 1.1rem;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Rubik', sans-serif;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent1), var(--accent4));
+      color: white;
+      box-shadow: 0 4px 20px rgba(255, 0, 170, 0.35);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 28px rgba(255, 0, 170, 0.5); }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--accent2), var(--accent5));
+      color: #0a0a1a;
+      box-shadow: 0 4px 20px rgba(0, 245, 212, 0.3);
+    }
+    .btn-secondary:hover { box-shadow: 0 6px 28px rgba(0, 245, 212, 0.45); }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-ghost:hover { background: rgba(255, 255, 255, 0.14); }
+
+    .btn-danger {
+      background: rgba(255, 50, 80, 0.25);
+      color: #ff6b8a;
+      border: 1px solid rgba(255, 80, 100, 0.3);
+    }
+    .btn-danger:hover { background: rgba(255, 50, 80, 0.4); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    .stat {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.3s;
+    }
+    .stat:hover { transform: scale(1.03); }
+    .stat .value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .stat .label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .value-pink { color: var(--accent1); text-shadow: 0 0 18px rgba(255,0,170,0.4); }
+    .value-cyan { color: var(--accent2); text-shadow: 0 0 18px rgba(0,245,212,0.4); }
+    .value-yellow { color: var(--accent3); text-shadow: 0 0 18px rgba(254,228,64,0.4); }
+    .value-purple { color: var(--accent4); text-shadow: 0 0 18px rgba(155,93,229,0.4); }
+
+    .history {
+      max-height: 320px;
+      overflow-y: auto;
+      margin-top: 0.8rem;
+      padding-right: 4px;
+    }
+    .history::-webkit-scrollbar { width: 5px; }
+    .history::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+    .history::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0.9rem;
+      background: rgba(0,0,0,0.25);
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      animation: slideIn 0.4s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .history-item .left { display: flex; flex-direction: column; gap: 2px; }
+    .history-item .date {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      color: var(--accent2);
+    }
+    .history-item .note { color: var(--muted); font-size: 0.78rem; }
+    .history-item .amount {
+      font-weight: 600;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+    }
+    .amount.plus { color: var(--accent2); }
+    .amount.minus { color: var(--accent1); }
+
+    .history-item .delete-btn {
+      background: none;
+      border: none;
+      color: #ff6b8a;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0 0 0 10px;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+      min-width: auto;
+      flex: none;
+    }
+    .history-item .delete-btn:hover { opacity: 1; }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--muted);
+      padding: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid;
+      opacity: 0.25;
+      pointer-events: none;
+      animation: spin 25s linear infinite;
+    }
+    .ring1 { width: 80px; height: 80px; border-color: var(--accent1); top: -20px; right: -15px; }
+    .ring2 { width: 50px; height: 50px; border-color: var(--accent2); bottom: 10px; left: -10px; animation-direction: reverse; animation-duration: 18s; }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-circles">
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+    <div class="circle c3"></div>
+    <div class="circle c4"></div>
+    <div class="circle c5"></div>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>ҲИСОБКУНАКИ КОРӢ</h1>
+      <p>Рӯзҳои корӣ • Даромад • Пардохтҳо (рубл)</p>
+    </header>
+
+    <div class="grid">
+      <!-- Card 1: Add work day -->
+      <div class="card">
+        <div class="ring ring1"></div>
+        <h2><span class="dot dot-pink"></span> Илова кардани рӯзи кор</h2>
+
+        <div class="form-group">
+          <label>Сана</label>
+          <input type="date" id="workDate" />
+        </div>
+
+        <div class="form-group">
+          <label>Маблағ (рубл)</label>
+          <input type="number" id="workAmount" placeholder="Масалан 5000" min="0" step="100" />
+        </div>
+
+        <div class="form-group">
+          <label>Тавсиф (ихтиёрӣ)</label>
+          <input type="text" id="workNote" placeholder="Масалан: корҳои иловагӣ" />
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" onclick="addWorkDay()">+ Рӯзи корро илова кун</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Results -->
+      <div class="card">
+        <div class="ring ring2"></div>
+        <h2><span class="dot dot-cyan"></span> Натиҷаҳо</h2>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="value value-cyan" id="totalDays">0</div>
+            <div class="label">Рӯз кор кардаам</div>
+          </div>
+          <div class="stat">
+            <div class="value value-pink" id="totalEarned">0 ₽</div>
+            <div class="label">Кор кардаам</div>
+          </div>
+          <div class="stat">
+            <div class="value value-yellow" id="totalPaid">0 ₽</div>
+            <div class="label">Дода шудааст</div>
+          </div>
+          <div class="stat">
+            <div class="value value-purple" id="remaining">0 ₽</div>
+            <div class="label">Боқимонда</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Add payment -->
+      <div class="card">
+        <h2><span class="dot dot-yellow"></span> Пардохт (доданд)</h2>
+
+        <div class="form-group">
+          <label>Сана</label>
+          <input type="date" id="payDate" />
+        </div>
+
+        <div class="form-group">
+          <label>Маблағ (рубл)</label>
+          <input type="number" id="payAmount" placeholder="Масалан 10000" min="0" step="100" />
+        </div>
+
+        <div class="form-group">
+          <label>Тавсиф (ихтиёрӣ)</label>
+          <input type="text" id="payNote" placeholder="Масалан: пешпардохт" />
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-secondary" onclick="addPayment()">− Пардохтро илова кун</button>
+        </div>
+      </div>
+
+      <!-- Card 4: History -->
+      <div class="card">
+        <h2><span class="dot dot-purple"></span> Таърих</h2>
+        <div class="history" id="historyList">
+          <div class="empty-msg">Ҳанӯз амалиёте нест</div>
+        </div>
+        <div class="btn-row" style="margin-top: 0.8rem;">
+          <button class="btn-ghost" onclick="clearAll()">Тоза кардани ҳама</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Дизайни ғайриоддӣ • Glassmorphism + аниматсияҳои рангоранг
+    </footer>
+  </div>
+
+  <script>
+    let workDays = [];   // {id, date, amount, note, type: 'work'}
+    let payments = [];   // {id, date, amount, note, type: 'pay'}
+
+    // ===== Helpers =====
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    }
+
+    function formatMoney(n) {
+      return new Intl.NumberFormat('ru-RU').format(Math.round(n)) + ' ₽';
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      const [y, m, d] = iso.split('-');
+      return `${d}.${m}.${y}`;
+    }
+
+    function todayISO() {
+      const d = new Date();
+      return d.toISOString().slice(0, 10);
+    }
+
+    // ===== Storage =====
+    function load() {
+      try {
+        const saved = localStorage.getItem('workCalcV2');
+        if (saved) {
+          const data = JSON.parse(saved);
+          workDays = data.workDays || [];
+          payments = data.payments || [];
+        }
+      } catch (e) {}
+      // Set default dates
+      document.getElementById('workDate').value = todayISO();
+      document.getElementById('payDate').value = todayISO();
+      updateUI();
+    }
+
+    function save() {
+      localStorage.setItem('workCalcV2', JSON.stringify({ workDays, payments }));
+    }
+
+    // ===== UI =====
+    function updateUI() {
+      const totalDays = workDays.length;
+      const earned = workDays.reduce((s, w) => s + w.amount, 0);
+      const paid = payments.reduce((s, p) => s + p.amount, 0);
+      const remain = earned - paid;
+
+      document.getElementById('totalDays').textContent = totalDays;
+      document.getElementById('totalEarned').textContent = formatMoney(earned);
+      document.getElementById('totalPaid').textContent = formatMoney(paid);
+      document.getElementById('remaining').textContent = formatMoney(remain);
+
+      // Combined history (newest first)
+      const all = [
+        ...workDays.map(w => ({ ...w, type: 'work' })),
+        ...payments.map(p => ({ ...p, type: 'pay' }))
+      ].sort((a, b) => {
+        // Sort by date desc, then by id
+        if (b.date !== a.date) return b.date.localeCompare(a.date);
+        return b.id.localeCompare(a.id);
+      });
+
+      const list = document.getElementById('historyList');
+      if (all.length === 0) {
+        list.innerHTML = '<div class="empty-msg">Ҳанӯз амалиёте нест</div>';
+        return;
+      }
+
+      list.innerHTML = all.map(item => `
+        <div class="history-item">
+          <div class="left">
+            <div class="date">${formatDate(item.date)}</div>
+            <div class="note">${item.note || (item.type === 'work' ? 'Рӯзи кор' : 'Пардохт')}</div>
+          </div>
+          <div style="display:flex;align-items:center;">
+            <span class="amount ${item.type === 'work' ? 'plus' : 'minus'}">
+              ${item.type === 'work' ? '+' : '−'}${formatMoney(item.amount)}
+            </span>
+            <button class="delete-btn" onclick="deleteItem('${item.id}', '${item.type}')" title="Нест кардан">×</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ===== Actions =====
+    function addWorkDay() {
+      const date = document.getElementById('workDate').value;
+      const amount = +document.getElementById('workAmount').value;
+      const note = document.getElementById('workNote').value.trim();
+
+      if (!date) {
+        alert('Санаро интихоб кунед');
+        return;
+      }
+      if (!amount || amount <= 0) {
+        alert('Маблағро дуруст ворид кунед');
+        return;
+      }
+
+      workDays.push({
+        id: uid(),
+        date,
+        amount,
+        note
+      });
+
+      document.getElementById('workAmount').value = '';
+      document.getElementById('workNote').value = '';
+      // Keep date for next entry convenience
+      save();
+      updateUI();
+    }
+
+    function addPayment() {
+      const date = document.getElementById('payDate').value;
+      const amount = +document.getElementById('payAmount').value;
+      const note = document.getElementById('payNote').value.trim();
+
+      if (!date) {
+        alert('Санаро интихоб кунед');
+        return;
+      }
+      if (!amount || amount <= 0) {
+        alert('Маблағро дуруст ворид кунед');
+        return;
+      }
+
+      payments.push({
+        id: uid(),
+        date,
+        amount,
+        note
+      });
+
+      document.getElementById('payAmount').value = '';
+      document.getElementById('payNote').value = '';
+      save();
+      updateUI();
+    }
+
+    function deleteItem(id, type) {
+      if (type === 'work') {
+        workDays = workDays.filter(w => w.id !== id);
+      } else {
+        payments = payments.filter(p => p.id !== id);
+      }
+      save();
+      updateUI();
+    }
+
+    function clearAll() {
+      if (confirm('Ҳамаи рӯзҳо ва пардохтҳоро тоза кунем?')) {
+        workDays = [];
+        payments = [];
+        save();
+        updateUI();
+      }
+    }
+
+    // Enter key support
+    document.getElementById('workAmount').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addWorkDay();
+    });
+    document.getElementById('payAmount').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addPayment();
+    });
+
+    // Init
+    load();
+  </script>
+</body>
+</html>
